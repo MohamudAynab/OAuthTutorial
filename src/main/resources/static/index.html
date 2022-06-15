@@ -15,10 +15,17 @@
 <h1>OAuth2 Tutorial</h1>
 <div class="container"></div>
 <div class="container unauthenticated">
-    With GitHub: <a href="/oauth2/authorization/github">click here</a>
+    With GitHub: <a href="/oauth2/authorization/github">Click Here</a>
 </div>
 <div class="container authenticated" style="display:none">
     Logged in as: <span id="user"></span>
 </div>
 </body>
+<script type="text/javascript">
+    $.get("/user", function(data) {
+        $("#user").html(data.name);
+        $(".unauthenticated").hide()
+        $(".authenticated").show()
+    });
+</script>
 </html>
