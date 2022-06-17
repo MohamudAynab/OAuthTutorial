@@ -8,8 +8,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 import java.util.Collections;
@@ -19,7 +20,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class OAuthTutorialApplication extends WebSecurityConfigurerAdapter {
 
-	@GetMapping("/user")
+	@RequestMapping("/user")
 	public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
 		return Collections.singletonMap("name", principal.getAttribute("name"));
 	}
@@ -35,12 +36,23 @@ public class OAuthTutorialApplication extends WebSecurityConfigurerAdapter {
 				.exceptionHandling(e -> e
 						.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 				)
+				.csrf(c -> c
+						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+				)
+				.logout(l -> l
+						.logoutSuccessUrl("/").permitAll()
+				)
 				.oauth2Login();
 		// @formatter:on
 	}
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(OAuthTutorialApplication.class, args);
 	}
 
 }
+
+
+// TODO: Add logout endpoint, add CSRF token in the client, redirect URI, add client registration, login link,
+//TODO: Add local user database, add error page for unauthenticated users, add error message,
